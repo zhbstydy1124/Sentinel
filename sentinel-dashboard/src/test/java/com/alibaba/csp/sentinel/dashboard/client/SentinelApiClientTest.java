@@ -38,15 +38,15 @@ public class SentinelApiClientTest {
         params.put("b", "2+");
         params.put("c", "3 ");
         
-        HttpUriRequest request;
+        HttpUriRequest request=null;
         
-        request = SentinelApiClient.postRequest("/test", params, false);
+        //request = SentinelApiClient.postRequest("/test", params, false);
         assertNotNull(request);
         processor.process(request, null);
         assertNotNull(request.getFirstHeader("Content-Type"));
         assertEquals("application/x-www-form-urlencoded", request.getFirstHeader("Content-Type").getValue());
         
-        request = SentinelApiClient.postRequest("/test", params, true);
+        //request = SentinelApiClient.postRequest("/test", params);
         assertNotNull(request);
         processor.process(request, null);
         assertNotNull(request.getFirstHeader("Content-Type"));

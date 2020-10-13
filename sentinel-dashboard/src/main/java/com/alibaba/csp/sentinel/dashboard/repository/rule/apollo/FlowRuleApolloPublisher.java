@@ -29,14 +29,13 @@ public class FlowRuleApolloPublisher implements DynamicRulePublisher<List<FlowRu
         }
 
         // Increase the configuration
-        String appId = "appId";
         String flowDataId = ApolloConfigUtil.getFlowDataId(app);
         OpenItemDTO openItemDTO = new OpenItemDTO();
         openItemDTO.setKey(flowDataId);
         openItemDTO.setValue(converter.convert(rules));
         openItemDTO.setComment("Program auto-join");
         openItemDTO.setDataChangeCreatedBy("apollo");
-        apolloOpenApiClient.createOrUpdateItem(appId, "DEV", "default", "application", openItemDTO);
+        apolloOpenApiClient.createOrUpdateItem(app, "DEV", "default", "application", openItemDTO);
 
         // Release configuration
         NamespaceReleaseDTO namespaceReleaseDTO = new NamespaceReleaseDTO();
@@ -44,6 +43,6 @@ public class FlowRuleApolloPublisher implements DynamicRulePublisher<List<FlowRu
         namespaceReleaseDTO.setReleaseComment("Modify or add configurations");
         namespaceReleaseDTO.setReleasedBy("apollo");
         namespaceReleaseDTO.setReleaseTitle("Modify or add configurations");
-        apolloOpenApiClient.publishNamespace(appId, "DEV", "default", "application", namespaceReleaseDTO);
+        apolloOpenApiClient.publishNamespace(app, "DEV", "default", "application", namespaceReleaseDTO);
     }
 }
