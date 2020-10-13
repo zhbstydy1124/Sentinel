@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+	<!-- 配置项目名称及输出路径 -->
+	<springProperty scope="context" name="projectName" source="spring.application.name" defaultValue="sentinel-dashboard" />
+	<property name="logLevel" value="INFO" />
+	<property name="logPath" value="/logs/${projectName}" />
+	<appender name="consoleAppender"
+		class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<charset>UTF-8</charset>
+			<pattern>%d %-5level [%thread] %logger{36} %line - %.-1024msg%n
+			</pattern>
+		</encoder>
+	</appender>
+	<!-- 日志文件 appender定义 -->
+	<appender name="appInfoAppender"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>${logPath}/${projectName}-info.log</File>
+		<rollingPolicy
+			class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<!-- rollover daily -->
+			<fileNamePattern>${logPath}/history/%d{yyyy-MM,aux}/%d{yyyy-MM-dd}.${projectName}-info.log
+			</fileNamePattern>
+			<maxHistory>30</maxHistory>
+			<cleanHistoryOnStart>true</cleanHistoryOnStart>
+		</rollingPolicy>
+		<encoder>
+			<charset>UTF-8</charset>
+			<pattern>%d %-5level [%thread] %logger{36} %line - %.-1024msg%n
+			</pattern>
+		</encoder>
+	</appender>
+	<!-- error日志 -->
+	<appender name="appErrorAppender"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>${logPath}/${projectName}-error.log</File>
+		<rollingPolicy
+			class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<FileNamePattern>${logPath}/history/%d{yyyy-MM,aux}/%d{yyyy-MM-dd}.${projectName}-error.log
+			</FileNamePattern>
+			<maxHistory>30</maxHistory>
+			<cleanHistoryOnStart>true</cleanHistoryOnStart>
+		</rollingPolicy>
+		<encoder>
+			<charset>UTF-8</charset>
+			<Pattern>%d %-5level [%thread] %logger{68} %line - %.-1024msg%n
+			</Pattern>
+		</encoder>
+		<filter class="ch.qos.logback.classic.filter.LevelFilter"><!-- 只打印错误日志 -->
+			<level>ERROR</level>
+			<onMatch>ACCEPT</onMatch>
+			<onMismatch>DENY</onMismatch>
+		</filter>
+	</appender>
+	<appender name="asyncInfo"
+		class="ch.qos.logback.classic.AsyncAppender">
+		<queueSize>1024</queueSize>
+		<includeCallerData>true</includeCallerData>
+		<appender-ref ref="appInfoAppender" />
+	</appender>
+	<appender name="asyncError"
+		class="ch.qos.logback.classic.AsyncAppender">
+		<queueSize>1024</queueSize>
+		<includeCallerData>true</includeCallerData>
+		<appender-ref ref="appErrorAppender" />
+	</appender>
+	<logger name="com.alibaba.csp" additivity="false">
+		<level value="INFO" />
+		<appender-ref ref="asyncInfo" />
+	</logger>
+	<logger name="org.springframework" additivity="false">
+		<level value="ERROR" />
+		<appender-ref ref="asyncError" />
+	</logger>
+	<root level="INFO">
+		<appender-ref ref="asyncInfo" />
+		<appender-ref ref="asyncError" />
+	</root>
+</configuration>
