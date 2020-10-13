@@ -58,11 +58,17 @@ public class FlowControllerV2 {
     @Autowired
     private InMemoryRuleRepositoryAdapter<FlowRuleEntity> repository;
 
+//    @Autowired
+//    @Qualifier("flowRuleDefaultProvider")
+//    private DynamicRuleProvider<List<FlowRuleEntity>> ruleProvider;
+//    @Autowired
+//    @Qualifier("flowRuleDefaultPublisher")
+//    private DynamicRulePublisher<List<FlowRuleEntity>> rulePublisher;
     @Autowired
-    @Qualifier("flowRuleDefaultProvider")
+    @Qualifier("flowRuleApolloProvider")
     private DynamicRuleProvider<List<FlowRuleEntity>> ruleProvider;
     @Autowired
-    @Qualifier("flowRuleDefaultPublisher")
+    @Qualifier("flowRuleApolloPublisher")
     private DynamicRulePublisher<List<FlowRuleEntity>> rulePublisher;
 
     @GetMapping("/rules")
@@ -161,8 +167,7 @@ public class FlowControllerV2 {
     @PutMapping("/rule/{id}")
     @AuthAction(AuthService.PrivilegeType.WRITE_RULE)
 
-    public Result<FlowRuleEntity> apiUpdateFlowRule(@PathVariable("id") Long id,
-                                                    @RequestBody FlowRuleEntity entity) {
+    public Result<FlowRuleEntity> apiUpdateFlowRule(@PathVariable("id") Long id, @RequestBody FlowRuleEntity entity) {
         if (id == null || id <= 0) {
             return Result.ofFail(-1, "Invalid id");
         }
@@ -219,7 +224,7 @@ public class FlowControllerV2 {
         return Result.ofSuccess(id);
     }
 
-    private void publishRules(/*@NonNull*/ String app) throws Exception {
+    private void publishRules(/* @NonNull */ String app) throws Exception {
         List<FlowRuleEntity> rules = repository.findAllByApp(app);
         rulePublisher.publish(app, rules);
     }

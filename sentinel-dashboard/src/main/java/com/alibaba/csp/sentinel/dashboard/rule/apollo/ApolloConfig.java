@@ -13,21 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.alibaba.csp.sentinel.dashboard.rule.zookeeper;
+package com.alibaba.csp.sentinel.dashboard.rule.apollo;
+
+import java.util.List;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 import com.alibaba.csp.sentinel.dashboard.datasource.entity.rule.FlowRuleEntity;
 import com.alibaba.csp.sentinel.datasource.Converter;
 import com.alibaba.fastjson.JSON;
-import org.apache.curator.framework.CuratorFramework;
-import org.apache.curator.framework.CuratorFrameworkFactory;
-import org.apache.curator.retry.ExponentialBackoffRetry;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
-import java.util.List;
+import com.ctrip.framework.apollo.openapi.client.ApolloOpenApiClient;
 
+/**
+ * @author hantianwei@gmail.com
+ * @since 1.5.0
+ */
 @Configuration
-public class ZookeeperConfig {
+public class ApolloConfig {
 
     @Bean
     public Converter<List<FlowRuleEntity>, String> flowRuleEntityEncoder() {
@@ -40,12 +44,12 @@ public class ZookeeperConfig {
     }
 
     @Bean
-    public CuratorFramework zkClient() {
-        CuratorFramework zkClient =
-                CuratorFrameworkFactory.newClient("127.0.0.1:2181",
-                        new ExponentialBackoffRetry(ZookeeperConfigUtil.SLEEP_TIME, ZookeeperConfigUtil.RETRY_TIMES));
-        zkClient.start();
+    public ApolloOpenApiClient apolloOpenApiClient() {
+        ApolloOpenApiClient client = ApolloOpenApiClient.newBuilder()
+            .withPortalUrl("http://192.168.2.250:8070")
+            .withToken("37d794dad27047b051eb23c01a70f78e38dc7503")
+            .build();
+        return client;
 
-        return zkClient;
     }
 }
