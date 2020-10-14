@@ -3,7 +3,7 @@
 	<!-- 配置项目名称及输出路径 -->
 	<springProperty scope="context" name="projectName" source="spring.application.name" defaultValue="sentinel-dashboard" />
 	<property name="logLevel" value="INFO" />
-	<property name="logPath" value="/logs/${projectName}" />
+	<property name="logPath" value="/home/worker/logs/${projectName}" />
 	<appender name="consoleAppender"
 		class="ch.qos.logback.core.ConsoleAppender">
 		<encoder>
